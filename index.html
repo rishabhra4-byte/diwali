@@ -20,45 +20,77 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Mukta:wght@400;600&display=swap">
 <style>
-:root{--night:#070b1a;--marigold:#ffb43a;--ink:#fbeedd;--muted:#c9bfd6;--display:"Yatra One",Georgia,serif;--body:"Mukta",system-ui,sans-serif}
+:root{--night:#070b1a;--marigold:#ffb43a;--ink:#fbeedd;--muted:#c9bfd6;--panel:#161d44cc;--line:#ffb43a40;--display:"Yatra One",Georgia,serif;--body:"Mukta",system-ui,sans-serif}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{background:linear-gradient(180deg,#070b1a 0%,#121a3f 55%,#2b2350 80%,#3b2442 100%);color:var(--ink);font-family:var(--body);overflow:hidden;-webkit-tap-highlight-color:transparent}
 canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
 #sky{z-index:0}#fx{z-index:3}
-.stage{position:relative;z-index:2;height:100%;display:grid;place-items:center;padding:max(24px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));text-align:center}
-.scene{display:flex;flex-direction:column;align-items:center;gap:16px;max-width:30rem;transform:translateY(-8vh)}
 [hidden]{display:none!important}
+.stage{position:relative;z-index:2;height:100%;overflow-y:auto;scroll-behavior:smooth;padding:max(24px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) calc(110px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));text-align:center}
+.scene{display:flex;flex-direction:column;align-items:center;gap:16px;max-width:30rem;margin:0 auto;min-height:calc(100% - 40px);justify-content:center}
 .eyebrow{font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
-h1{font-family:var(--display);font-weight:400;font-size:clamp(2.3rem,10vw,3.6rem);line-height:1.05;margin:0;text-wrap:balance}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(2.3rem,10vw,3.5rem);line-height:1.05;margin:0;text-wrap:balance}
 h1 em{font-style:normal;color:var(--marigold);text-shadow:0 0 28px #ffb43a77}
+h2{font-family:var(--display);font-weight:400;font-size:1.6rem;margin:0;color:var(--marigold)}
 p{margin:0}
 .hint{color:var(--muted);font-size:.92rem}
+.step{font-weight:600;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 16px;font-size:.95rem;animation:nudge 1.8s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateY(-3px)}}
 .msg{font-size:1.1rem;line-height:1.7;max-width:34ch}
+.msg span{opacity:0;display:inline-block;transform:translateY(6px);transition:opacity .5s,transform .5s}
+.msg span.on{opacity:1;transform:none}
 .sign{font-family:var(--display);color:var(--marigold);font-size:1.3rem}
-.gift{border:0;background:none;cursor:pointer;padding:8px;animation:bob 2.6s ease-in-out infinite;-webkit-tap-highlight-color:transparent}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:22px 20px;display:flex;flex-direction:column;gap:12px;align-items:center;width:100%;backdrop-filter:blur(6px);animation:rise .9s cubic-bezier(.2,1,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}}
+button{font-family:var(--body)}
+.btn{font-weight:600;font-size:1.02rem;color:#2a1206;background:linear-gradient(180deg,#ffd27a,var(--marigold));border:0;border-radius:999px;padding:13px 24px;cursor:pointer}
+.btn.ring{animation:ring 2s infinite}
+@keyframes ring{0%{box-shadow:0 0 0 0 #ffb43a88}70%{box-shadow:0 0 0 16px #ffb43a00}}
+.btn.ghost{background:transparent;color:var(--marigold);border:1px solid var(--marigold)}
+.btn:focus-visible,.gift:focus-visible,.diya-btn:focus-visible,.mini:focus-visible,.chip:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+
+.gift{border:0;background:none;cursor:pointer;padding:8px;animation:bob 2.6s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(-8px) rotate(-2deg)}}
 .gift .lid{transition:transform .6s cubic-bezier(.3,1.4,.5,1)}
 .gift.pop{animation:none}.gift.pop .lid{transform:translate(30px,-90px) rotate(28deg)}
-.btn{font:600 1.02rem var(--body);color:#2a1206;background:linear-gradient(180deg,#ffd27a,var(--marigold));border:0;border-radius:999px;padding:13px 26px;cursor:pointer;animation:ring 2s infinite}
-@keyframes ring{0%{box-shadow:0 0 0 0 #ffb43a88}70%{box-shadow:0 0 0 16px #ffb43a00}}
-.btn:focus-visible,.gift:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
-.diya{position:relative;width:200px;height:150px}
-.glow{position:absolute;left:50%;top:-30px;width:280px;height:280px;transform:translate(-50%,-25%);background:radial-gradient(circle,#ffb43a99,#ff7a1a22 45%,transparent 70%);opacity:0;transition:opacity 1.2s}
-.lit .glow{opacity:1;animation:pulse 2.2s ease-in-out infinite}
+
+.hero{position:relative;width:220px;height:160px;display:grid;place-items:end center}
+.glow{position:absolute;left:50%;top:-30px;width:280px;height:280px;transform:translate(-50%,-25%);background:radial-gradient(circle,#ffb43a99,#ff7a1a22 45%,transparent 70%);opacity:0;transition:opacity 1.2s;pointer-events:none}
+.big-lit .glow{opacity:1;animation:pulse 2.2s ease-in-out infinite}
 @keyframes pulse{50%{transform:translate(-50%,-25%) scale(1.08)}}
-.flame{transform-box:fill-box;transform-origin:50% 100%;transform:scale(0);transition:transform .8s .3s cubic-bezier(.3,1.6,.5,1)}
-.lit .flame{transform:scale(1);animation:flick .16s 1.1s infinite alternate}
+.diya-btn{position:relative;border:0;background:none;padding:0;cursor:pointer;border-radius:20px}
+.diya-btn[disabled],.mini[disabled]{cursor:default}
+.flame{transform-box:fill-box;transform-origin:50% 100%;transform:scale(0);transition:transform .7s cubic-bezier(.3,1.6,.5,1)}
+.on .flame{transform:scale(1);animation:flick .16s .7s infinite alternate}
 @keyframes flick{from{transform:scale(1)}to{transform:scale(1.05,.94) skewX(3deg)}}
-.fade{opacity:0;transform:translateY(12px);transition:opacity 1s,transform 1s}
-.lit .fade{opacity:1;transform:none}
-.lit .d1{transition-delay:.9s}.lit .d2{transition-delay:1.5s}.lit .d3{transition-delay:2.3s}.lit .d4{transition-delay:3.2s}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important;transition-delay:0s!important}}
+.wick{opacity:0}.ready .wick{opacity:1;animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.2}}
+.row{display:flex;gap:clamp(6px,3vw,14px);justify-content:center;flex-wrap:wrap}
+.mini{border:0;background:none;padding:6px;cursor:pointer;border-radius:14px}
+.mini svg{width:48px;height:42px;display:block}
+.count{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.9rem}
+
+.wish-form{display:flex;gap:8px;width:100%;max-width:26rem;flex-wrap:wrap;justify-content:center}
+.wish-form input{flex:1 1 200px;min-width:0;font:1rem var(--body);color:var(--ink);background:#0c1130;border:1px solid var(--line);border-radius:999px;padding:12px 18px}
+.wish-form input::placeholder{color:#9a90b0}
+.wish-form input:focus-visible{outline:2px solid var(--marigold);outline-offset:2px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.chip{font-size:.88rem;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
+.reply{font-size:1rem;line-height:1.5;background:#0c1130;border:1px dashed var(--line);border-radius:14px;padding:12px 14px;user-select:all;max-width:100%}
+.toast{font-size:.9rem;color:var(--marigold);min-height:1.2em}
+
+.dock{position:fixed;z-index:5;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);right:max(14px,calc(env(safe-area-inset-right,0px) + 14px));display:flex;gap:8px}
+.dock button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:#15193add;color:var(--ink);font-size:1.1rem;cursor:pointer}
+.dock button[aria-pressed="false"]{opacity:.5}
+.dock button:focus-visible{outline:2px solid var(--marigold);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}.stage{scroll-behavior:auto}}
 </style>
 </head>
 <body>
 <canvas id="sky"></canvas>
-<main class="stage">
+<main class="stage" id="stage">
   <section class="scene" id="closed">
     <span class="eyebrow">Happy Diwali</span>
     <h1><em>Rishabh</em> sent you a Diwali gift</h1>
@@ -74,84 +106,179 @@ p{margin:0}
         </g>
       </svg>
     </button>
-    <button class="btn" id="open">Tap to open 🎁</button>
+    <button class="btn ring" id="open">Tap to open 🎁</button>
     <p class="hint">Turn your sound on 🔊</p>
   </section>
 
-  <section class="scene" id="opened" hidden>
-    <div class="diya">
+  <section class="scene" id="diyas" hidden>
+    <span class="eyebrow">A diya, just for you</span>
+    <div class="hero" id="hero">
       <div class="glow"></div>
-      <svg width="200" height="150" viewBox="0 0 180 150" role="img" aria-label="A lit diya" style="position:relative">
-        <g class="flame">
-          <path d="M90 10 C76 34 74 52 90 64 C106 52 104 34 90 10Z" fill="#ff7a1a"/>
-          <path d="M90 26 C82 41 82 52 90 60 C98 52 98 41 90 26Z" fill="#ffd36b"/>
-          <path d="M90 41 C86 48 86 54 90 58 C94 54 94 48 90 41Z" fill="#fff6dc"/>
-        </g>
-        <rect x="88" y="60" width="4" height="10" fill="#3a2414"/>
-        <path d="M18 72 Q90 66 162 72 Q150 122 90 126 Q30 122 18 72Z" fill="#b5532a"/>
-        <path d="M18 72 Q90 66 162 72 Q90 84 18 72Z" fill="#7a3216"/>
-        <path d="M34 92 Q90 104 146 92" fill="none" stroke="#ffb43a" stroke-width="3" stroke-dasharray="2 7" stroke-linecap="round"/>
-        <path d="M44 106 Q90 116 136 106" fill="none" stroke="#e0334a" stroke-width="3"/>
-      </svg>
+      <button class="diya-btn ready" id="big" aria-label="Light the diya">
+        <svg width="200" height="150" viewBox="0 0 180 150" aria-hidden="true">
+          <g class="flame">
+            <path d="M90 10 C76 34 74 52 90 64 C106 52 104 34 90 10Z" fill="#ff7a1a"/>
+            <path d="M90 26 C82 41 82 52 90 60 C98 52 98 41 90 26Z" fill="#ffd36b"/>
+            <path d="M90 41 C86 48 86 54 90 58 C94 54 94 48 90 41Z" fill="#fff6dc"/>
+          </g>
+          <circle class="wick" cx="90" cy="60" r="6" fill="#ffb43a"/>
+          <rect x="88" y="60" width="4" height="10" fill="#3a2414"/>
+          <path d="M18 72 Q90 66 162 72 Q150 122 90 126 Q30 122 18 72Z" fill="#b5532a"/>
+          <path d="M18 72 Q90 66 162 72 Q90 84 18 72Z" fill="#7a3216"/>
+          <path d="M34 92 Q90 104 146 92" fill="none" stroke="#ffb43a" stroke-width="3" stroke-dasharray="2 7" stroke-linecap="round"/>
+          <path d="M44 106 Q90 116 136 106" fill="none" stroke="#e0334a" stroke-width="3"/>
+        </svg>
+      </button>
     </div>
-    <h1 class="fade d1">Happy Diwali, <em>Angmoo</em></h1>
-    <p class="msg fade d2">From the mountains of Kashmir to the hills of Dehradun, may this Diwali fill your days with light, warmth and lots of sweets between all the studying. Hope it feels a little like home tonight. ✨</p>
-    <p class="sign fade d3">— Rishabh</p>
-    <p class="hint fade d4">Tap the sky for fireworks</p>
+    <p class="step" id="stepText">👆 Tap the diya to light it</p>
+    <div class="row" id="row" hidden></div>
+    <p class="count" id="count" hidden></p>
+  </section>
+
+  <section class="scene" id="note" hidden>
+    <div class="card">
+      <h1>Happy Diwali, <em>Angmoo</em></h1>
+      <p class="msg" id="msg"></p>
+      <p class="sign">— Rishabh</p>
+    </div>
+    <button class="btn ring" id="toLantern" hidden>Make a wish 🏮</button>
+  </section>
+
+  <section class="scene" id="lantern" hidden>
+    <h2>Send a wish into the sky</h2>
+    <p class="hint">Write a wish and let it float up on a lantern. It stays between you and the sky.</p>
+    <form class="wish-form" id="wishForm" autocomplete="off">
+      <input id="wishInput" maxlength="40" placeholder="Type your wish…" aria-label="Your wish">
+      <button class="btn" type="submit">Release 🏮</button>
+    </form>
+    <div class="chips" id="chips"></div>
+    <p class="toast" id="wishToast" aria-live="polite"></p>
+    <button class="btn ghost" id="toEnd" hidden>One last thing ✨</button>
+  </section>
+
+  <section class="scene" id="end" hidden>
+    <h2>Wish Rishabh back?</h2>
+    <p class="hint">Copy this and send it to him</p>
+    <p class="reply" id="replyText">Happy Diwali, Rishabh! 🪔 Thanks for the lovely gift ✨</p>
+    <div class="actions">
+      <button class="btn" id="copy">Copy message</button>
+      <button class="btn ghost" id="finale">Grand finale 🎆</button>
+    </div>
+    <p class="toast" id="toast" aria-live="polite"></p>
+    <p class="hint">Tap the sky for fireworks · drag for a sparkler</p>
   </section>
 </main>
 <canvas id="fx"></canvas>
+<div class="dock" id="dock" hidden>
+  <button id="snowBtn" aria-pressed="true" aria-label="Snowfall on or off">❄️</button>
+  <button id="muteBtn" aria-pressed="true" aria-label="Sound on or off">🔊</button>
+</div>
 
 <script>
 const $=id=>document.getElementById(id);
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const MSG="From the mountains of Kashmir to the hills of Dehradun, may this Diwali fill your days with light, warmth and lots of sweets between all the studying. Hope it feels a little like home tonight. ✨";
+MSG.split(" ").forEach(w=>{const s=document.createElement("span");s.textContent=w+" ";$("msg").appendChild(s)});
+
+// ---------- sky ----------
 const sky=$("sky"),sx=sky.getContext("2d"),fc=$("fx"),fx=fc.getContext("2d");
-let W,H,stars=[],ridges=[],lanterns=[];
-function ridge(base,amp,seed,step){const pts=[];let y=base;for(let x=-20;x<=W+20;x+=step){y=base-amp*(0.5+0.5*Math.sin(x*0.004+seed)*Math.cos(x*0.0013+seed*2))-Math.random()*amp*0.25;pts.push([x,y])}return pts}
+let W,H,stars=[],ridges=[],lanterns=[],flakes=[],snowOn=true;
+function ridge(base,amp,seed,step){const pts=[];for(let x=-20;x<=W+20;x+=step){const y=base-amp*(0.5+0.5*Math.sin(x*0.004+seed)*Math.cos(x*0.0013+seed*2))-Math.random()*amp*0.25;pts.push([x,y])}return pts}
 function size(){W=innerWidth;H=innerHeight;const d=Math.min(devicePixelRatio||1,2);for(const c of [sky,fc]){c.width=W*d;c.height=H*d;c.getContext("2d").setTransform(d,0,0,d,0,0)}
   stars=Array.from({length:Math.round(W*H/6000)},()=>({x:Math.random()*W,y:Math.random()*H*.65,r:Math.random()*1.3+.2,p:Math.random()*6}));
-  ridges=[{pts:ridge(H*.80,H*.22,1.3,38),fill:"#1c2550",snow:true},{pts:ridge(H*.88,H*.13,4.1,30),fill:"#141a3a",snow:false},{pts:ridge(H*.96,H*.08,7.7,24),fill:"#0b0f24",snow:false}]}
+  ridges=[{pts:ridge(H*.80,H*.22,1.3,38),fill:"#1c2550",snow:true},{pts:ridge(H*.88,H*.13,4.1,30),fill:"#141a3a"},{pts:ridge(H*.96,H*.08,7.7,24),fill:"#0b0f24"}];
+  flakes=Array.from({length:reduce?0:Math.round(W/9)},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.8+.6,v:Math.random()*.6+.3,ph:Math.random()*6}))}
 addEventListener("resize",size);size();
 function drawRidge(r){sx.fillStyle=r.fill;sx.beginPath();sx.moveTo(-20,H);r.pts.forEach(([x,y])=>sx.lineTo(x,y));sx.lineTo(W+20,H);sx.closePath();sx.fill();
-  if(r.snow){sx.fillStyle="rgba(235,240,255,.55)";for(let i=1;i<r.pts.length-1;i++){const [x,y]=r.pts[i],[x0,y0]=r.pts[i-1],[x1,y1]=r.pts[i+1];if(y<y0&&y<y1){sx.beginPath();sx.moveTo(x,y);sx.lineTo(x-14,y+12);sx.lineTo(x-4,y+9);sx.lineTo(x+3,y+14);sx.lineTo(x+13,y+11);sx.closePath();sx.fill()}}}}
-function drawSky(t){sx.clearRect(0,0,W,H);
-  sx.fillStyle="#f4ecd8";sx.globalAlpha=.9;sx.beginPath();sx.arc(W*.82,H*.14,Math.min(W,H)*.045,0,7);sx.fill();sx.fillStyle="#070b1a";sx.beginPath();sx.arc(W*.82+Math.min(W,H)*.02,H*.14-Math.min(W,H)*.012,Math.min(W,H)*.042,0,7);sx.fill();
+  if(r.snow){sx.fillStyle="rgba(235,240,255,.55)";for(let i=1;i<r.pts.length-1;i++){const [x,y]=r.pts[i];if(y<r.pts[i-1][1]&&y<r.pts[i+1][1]){sx.beginPath();sx.moveTo(x,y);sx.lineTo(x-14,y+12);sx.lineTo(x-4,y+9);sx.lineTo(x+3,y+14);sx.lineTo(x+13,y+11);sx.closePath();sx.fill()}}}}
+function addLantern(text,x){lanterns.push({x:x??Math.random()*W,y:H*.86,s:text?1.4:.6+Math.random()*.7,v:text?.45:.25+Math.random()*.35,ph:Math.random()*6,text})}
+function drawSky(t){sx.clearRect(0,0,W,H);const m=Math.min(W,H);
+  sx.globalAlpha=.9;sx.fillStyle="#f4ecd8";sx.beginPath();sx.arc(W*.82,H*.14,m*.045,0,7);sx.fill();sx.fillStyle="#070b1a";sx.beginPath();sx.arc(W*.82+m*.02,H*.14-m*.012,m*.042,0,7);sx.fill();
   for(const s of stars){sx.globalAlpha=.35+.45*Math.sin(t/900+s.p);sx.fillStyle="#fbeedd";sx.beginPath();sx.arc(s.x,s.y,s.r,0,7);sx.fill()}
   sx.globalAlpha=1;
-  lanterns=lanterns.filter(l=>{l.y-=l.v;l.x+=Math.sin(t/1500+l.ph)*.2;const w=12*l.s,h=18*l.s,f=.85+.15*Math.sin(t/120+l.ph);
+  lanterns=lanterns.filter(l=>{l.y-=l.v;l.x+=Math.sin(t/1500+l.ph)*.25;const w=12*l.s,h=18*l.s,f=.85+.15*Math.sin(t/120+l.ph);
     const g=sx.createRadialGradient(l.x,l.y,0,l.x,l.y,h*2.2);g.addColorStop(0,`rgba(255,170,60,${.35*f})`);g.addColorStop(1,"rgba(255,120,30,0)");sx.fillStyle=g;sx.beginPath();sx.arc(l.x,l.y,h*2.2,0,7);sx.fill();
-    sx.fillStyle=`rgba(255,${150+40*f|0},70,.95)`;sx.beginPath();sx.moveTo(l.x-w/2,l.y-h/2);sx.lineTo(l.x+w/2,l.y-h/2);sx.lineTo(l.x+w*.38,l.y+h/2);sx.lineTo(l.x-w*.38,l.y+h/2);sx.closePath();sx.fill();return l.y>-60});
+    sx.fillStyle=`rgba(255,${150+40*f|0},70,.95)`;sx.beginPath();sx.moveTo(l.x-w/2,l.y-h/2);sx.lineTo(l.x+w/2,l.y-h/2);sx.lineTo(l.x+w*.38,l.y+h/2);sx.lineTo(l.x-w*.38,l.y+h/2);sx.closePath();sx.fill();
+    if(l.text){sx.font="600 14px Mukta, sans-serif";sx.textAlign="center";sx.fillStyle="rgba(251,238,221,.92)";sx.fillText(l.text,l.x,l.y+h+18)}
+    return l.y>-80});
   ridges.forEach(drawRidge);
-  // little lights in the valley
-  sx.fillStyle="#ffcf6b";for(let i=0;i<40;i++){const x=(i*97.3)%W,y=H*.93+((i*53)%30);sx.globalAlpha=.5+.5*Math.sin(t/400+i);sx.fillRect(x,y,2,2)}sx.globalAlpha=1}
-function addLantern(){lanterns.push({x:Math.random()*W,y:H*.85,s:.6+Math.random()*.7,v:.25+Math.random()*.35,ph:Math.random()*6})}
+  sx.fillStyle="#ffcf6b";for(let i=0;i<40;i++){sx.globalAlpha=.5+.5*Math.sin(t/400+i);sx.fillRect((i*97.3)%W,H*.93+((i*53)%30),2,2)}
+  if(snowOn){sx.fillStyle="#eef2ff";for(const f of flakes){f.y+=f.v;f.x+=Math.sin(t/1200+f.ph)*.3;if(f.y>H){f.y=-5;f.x=Math.random()*W}sx.globalAlpha=.7;sx.beginPath();sx.arc(f.x,f.y,f.r,0,7);sx.fill()}}
+  sx.globalAlpha=1}
 
-let ac=null;
-function audio(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume&&ac.resume()}catch(e){ac=null}}
-function bell(d=0,b=523.25,v=.15){if(!ac)return;const t=ac.currentTime+d;[1,2,3.01,4.2].forEach((m,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=b*m;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v/(i+1),t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+3.5-i*.6);o.connect(g).connect(ac.destination);o.start(t);o.stop(t+4)})}
-function noise(len,cut,vol,cr){if(!ac)return;const b=ac.createBuffer(1,ac.sampleRate*len,ac.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++){const e=Math.pow(1-i/d.length,cr?1.2:3);d[i]=(Math.random()*2-1)*e*(cr?(Math.random()<.03?1:.05):1)}const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();f.type=cr?"highpass":"lowpass";f.frequency.value=cut;g.gain.value=vol;s.buffer=b;s.connect(f).connect(g).connect(ac.destination);s.start()}
-function boom(){noise(.7,900,.45);setTimeout(()=>noise(1.1,3000,.45,true),120)}
+// ---------- sound ----------
+let ac=null,master=null,muted=false;
+function audio(){try{if(!ac){ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.connect(ac.destination)}ac.resume&&ac.resume()}catch(e){ac=null}}
+function bell(d=0,b=523.25,v=.14){if(!ac)return;const t=ac.currentTime+d;[1,2,3.01,4.2].forEach((m,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=b*m;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v/(i+1),t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+3.4-i*.6);o.connect(g).connect(master);o.start(t);o.stop(t+3.8)})}
+function noise(len,cut,vol,cr){if(!ac)return;const b=ac.createBuffer(1,ac.sampleRate*len,ac.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++){const e=Math.pow(1-i/d.length,cr?1.2:3);d[i]=(Math.random()*2-1)*e*(cr?(Math.random()<.03?1:.05):1)}const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();f.type=cr?"highpass":"lowpass";f.frequency.value=cut;g.gain.value=vol;s.buffer=b;s.connect(f).connect(g).connect(master);s.start()}
+function boom(){noise(.7,900,.4);setTimeout(()=>noise(1.1,3000,.4,true),120)}
+function strike(){noise(.3,2500,.22)}
+function pop(){if(!ac)return;const t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.frequency.setValueAtTime(700,t);o.frequency.exponentialRampToValueAtTime(220,t+.15);g.gain.setValueAtTime(.2,t);g.gain.exponentialRampToValueAtTime(.0001,t+.2);o.connect(g).connect(master);o.start(t);o.stop(t+.22)}
+const SCALE=[523.25,587.33,659.25,783.99,880,1046.5];
 
+// ---------- fireworks ----------
 const PAL=[["#ffb43a","#fff3c8"],["#e0334a","#ffb43a"],["#7fd1ff","#fbeedd"],["#c58bff","#ff9ad5"],["#7dff9a","#fff3c8"]];
 let parts=[],rockets=[];
 function launch(x,ty){rockets.push({x:x??W*(.15+Math.random()*.7),y:H*.85,ty:ty??H*(.1+Math.random()*.25),vy:-(H/90+Math.random()*3)})}
-function burst(x,y){boom();const [a1,a2]=PAL[Math.random()*PAL.length|0],n=reduce?40:110,shape=Math.random();for(let i=0;i<n;i++){const a=Math.PI*2*i/n;let v=2.2+Math.random()*2.6;if(shape<.35)v=3.6+Math.sin(a*5)*1.3;parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:1,dc:.009+Math.random()*.008,c:Math.random()<.6?a1:a2,tw:Math.random()<.3})}}
-function sparkle(x,y,n){for(let i=0;i<n;i++){const a=Math.random()*7,v=Math.random()*3;parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:.9,dc:.025,c:["#ffd36b","#e0334a","#fff3c8"][i%3],tw:true})}}
+function burst(x,y){boom();const [a1,a2]=PAL[Math.random()*PAL.length|0],n=reduce?40:110,shape=Math.random();for(let i=0;i<n;i++){const a=Math.PI*2*i/n;let v=2.2+Math.random()*2.6;if(shape<.3)v=3.6+Math.sin(a*5)*1.3;else if(shape<.45)v=3+Math.abs(Math.sin(a*2))*2;parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:1,dc:.009+Math.random()*.008,c:Math.random()<.6?a1:a2,tw:Math.random()<.3})}}
+function sparkle(x,y,n=6,cols=["#ffd36b","#fff3c8"]){for(let i=0;i<n;i++){const a=Math.random()*7,v=Math.random()*2.8;parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-.3,life:.9,dc:.025,c:cols[i%cols.length],tw:true})}}
+function at(el){const r=el.getBoundingClientRect();return [r.left+r.width/2,r.top+r.height/2]}
 function step(t){drawSky(t);fx.globalCompositeOperation="destination-out";fx.fillStyle="rgba(0,0,0,.2)";fx.fillRect(0,0,W,H);fx.globalCompositeOperation="lighter";
-  rockets=rockets.filter(r=>{r.y+=r.vy;r.vy*=.982;fx.fillStyle="#ffd36b";fx.beginPath();fx.arc(r.x,r.y,2,0,7);fx.fill();if(r.y<=r.ty||r.vy>-1.2){burst(r.x,r.y);return false}return true});
+  rockets=rockets.filter(r=>{r.y+=r.vy;r.vy*=.982;fx.fillStyle="#ffd36b";fx.beginPath();fx.arc(r.x,r.y,2,0,7);fx.fill();if(Math.random()<.5)parts.push({x:r.x,y:r.y+4,vx:(Math.random()-.5)*.5,vy:1,life:.5,dc:.04,c:"#ff9a2a"});if(r.y<=r.ty||r.vy>-1.2){burst(r.x,r.y);return false}return true});
   parts=parts.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.035;p.vx*=.984;p.vy*=.984;p.life-=p.dc;fx.globalAlpha=Math.max(p.life,0)*(p.tw&&Math.random()<.5?.25:1);fx.fillStyle=p.c;fx.beginPath();fx.arc(p.x,p.y,1.9,0,7);fx.fill();return p.life>0});
   fx.globalAlpha=1;requestAnimationFrame(step)}
 requestAnimationFrame(step);
 
+function show(id){const el=$(id);el.hidden=false;setTimeout(()=>el.scrollIntoView({behavior:reduce?"auto":"smooth",block:"center"}),60)}
+
+// 1. open
 let opened=false;
-function open(){if(opened)return;opened=true;audio();$("gift").classList.add("pop");const r=$("gift").getBoundingClientRect();sparkle(r.left+r.width/2,r.top+r.height/2,40);
-  setTimeout(()=>{$("closed").hidden=true;const o=$("opened");o.hidden=false;requestAnimationFrame(()=>requestAnimationFrame(()=>o.classList.add("lit")));
-    bell(.3);bell(1.7,659.25);
-    let n=0;const go=()=>{launch();if(++n<(reduce?3:7))setTimeout(go,500)};setTimeout(go,1600);
-    for(let i=0;i<(reduce?3:7);i++)setTimeout(addLantern,1200+i*700);
-    if(!reduce){setInterval(()=>{if(!document.hidden)launch()},3400);setInterval(()=>{if(!document.hidden&&lanterns.length<8)addLantern()},2500)}},650)}
+function open(){if(opened)return;opened=true;audio();pop();$("gift").classList.add("pop");sparkle(...at($("gift")),40,["#ffd36b","#e0334a","#fff3c8"]);
+  setTimeout(()=>{$("closed").hidden=true;$("diyas").hidden=false;$("dock").hidden=false;bell(0,392,.1)},650)}
 $("open").addEventListener("click",open);$("gift").addEventListener("click",open);
-addEventListener("pointerdown",e=>{if(!opened||e.target.closest("button"))return;audio();launch(e.clientX,Math.min(e.clientY,H*.6))});
+
+// 2. diyas
+$("big").addEventListener("click",()=>{const b=$("big");if(b.classList.contains("on"))return;audio();strike();b.classList.remove("ready");b.classList.add("on");b.disabled=true;$("hero").classList.add("big-lit");sparkle(...at(b),30);bell(.15);
+  setTimeout(()=>{$("stepText").textContent="Now light the little ones ✨";$("row").hidden=false;$("count").hidden=false;$("count").textContent="0 of 5 lit"},900)});
+const WISHES=["health","happiness","peace","success","good friends"];let lit=0;
+WISHES.forEach(w=>{const b=document.createElement("button");b.className="mini ready";b.setAttribute("aria-label","Light the diya for "+w);
+  b.innerHTML=`<svg viewBox="0 0 42 36" aria-hidden="true"><g class="flame"><path d="M21 2 C16 10 16 15 21 18 C26 15 26 10 21 2Z" fill="#ff9a2a"/><path d="M21 8 C19 12 19 15 21 17 C23 15 23 12 21 8Z" fill="#fff0c0"/></g><circle class="wick" cx="21" cy="18" r="3" fill="#ffb43a"/><path d="M3 19 Q21 17 39 19 Q36 33 21 34 Q6 33 3 19Z" fill="#b5532a"/><path d="M3 19 Q21 17 39 19 Q21 23 3 19Z" fill="#7a3216"/></svg>`;
+  b.addEventListener("click",()=>{if(b.disabled)return;audio();strike();b.classList.remove("ready");b.classList.add("on");b.disabled=true;sparkle(...at(b),18);bell(0,SCALE[lit],.11);lit++;
+    $("count").textContent=`Lit for ${w} · ${lit} of 5`;if(lit===5)allLit()});
+  $("row").appendChild(b)});
+
+// 3. note
+function allLit(){$("stepText").textContent="Happy Diwali! 🪔";SCALE.forEach((f,i)=>bell(.4+i*.12,f,.07));
+  let n=0;const go=()=>{launch();if(++n<(reduce?3:7))setTimeout(go,480)};setTimeout(go,600);
+  for(let i=0;i<(reduce?3:7);i++)setTimeout(()=>addLantern(),i*650);
+  if(!reduce){setInterval(()=>{if(!document.hidden)launch()},3600);setInterval(()=>{if(!document.hidden&&lanterns.length<9)addLantern()},2600)}
+  setTimeout(()=>{show("note");const sp=[...$("msg").children];sp.forEach((s,i)=>setTimeout(()=>s.classList.add("on"),500+i*(reduce?0:55)));setTimeout(()=>$("toLantern").hidden=false,800+sp.length*(reduce?0:55))},1400)}
+$("toLantern").addEventListener("click",()=>{$("toLantern").hidden=true;pop();show("lantern")});
+
+// 4. wish lantern
+let released=0;
+["Top marks this semester","Trip home soon","A great year ahead"].forEach(t=>{const c=document.createElement("button");c.className="chip";c.type="button";c.textContent=t;c.addEventListener("click",()=>{$("wishInput").value=t;$("wishInput").focus()});$("chips").appendChild(c)});
+$("wishForm").addEventListener("submit",e=>{e.preventDefault();audio();const v=$("wishInput").value.trim()||"A bright year ahead";
+  const [x]=at($("wishForm"));addLantern(v,Math.min(Math.max(x+(Math.random()-.5)*120,60),W-60));bell(0,659.25,.1);sparkle(x,H*.8,20);
+  $("wishInput").value="";released++;$("wishToast").textContent=released===1?"Your wish is on its way up 🏮":`${released} wishes floating up 🏮`;
+  if(released===1)setTimeout(()=>$("toEnd").hidden=false,1500)});
+$("toEnd").addEventListener("click",()=>{$("toEnd").hidden=true;pop();show("end")});
+
+// 5. reply + finale
+$("copy").addEventListener("click",()=>{const t=$("replyText").textContent;const ok=()=>$("toast").textContent="Copied! Paste it in your chat with Rishabh 💛";
+  const sel=()=>{const r=document.createRange();r.selectNodeContents($("replyText"));const s=getSelection();s.removeAllRanges();s.addRange(r);$("toast").textContent="Text selected. Long-press to copy."};
+  try{navigator.clipboard.writeText(t).then(ok,sel)}catch(e){sel()}sparkle(...at($("copy")),20)});
+$("finale").addEventListener("click",()=>{audio();for(let i=0;i<(reduce?5:22);i++)setTimeout(()=>launch(),i*170);for(let i=0;i<6;i++)setTimeout(()=>addLantern(),i*300)});
+
+// dock
+$("snowBtn").addEventListener("click",e=>{snowOn=!snowOn;e.currentTarget.setAttribute("aria-pressed",snowOn)});
+$("muteBtn").addEventListener("click",e=>{muted=!muted;if(master)master.gain.value=muted?0:1;e.currentTarget.textContent=muted?"🔇":"🔊";e.currentTarget.setAttribute("aria-pressed",!muted)});
+
+// sky interactions
+let down=false,last=0;
+addEventListener("pointerdown",e=>{if(!opened||e.target.closest("button,input,.card,.reply,form"))return;audio();down=true;launch(e.clientX,Math.min(e.clientY,H*.6))});
+addEventListener("pointermove",e=>{if(!down)return;const n=performance.now();if(n-last>16){last=n;sparkle(e.clientX,e.clientY);if(Math.random()<.12)noise(.15,4000,.1,true)}});
+addEventListener("pointerup",()=>down=false);addEventListener("pointercancel",()=>down=false);
 </script>
 </body>
 </html>
